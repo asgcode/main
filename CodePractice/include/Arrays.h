@@ -1,0 +1,1 @@
+int FindNElementRepeatNBy2Times(int* pArray, int size);
