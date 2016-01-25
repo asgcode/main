@@ -12,7 +12,8 @@ int main(int argc, int* argv[])
     // TestStringToInteger();
     // TestNonRepeatingChar();
     // TestReverseStringWords();
-    TestRepeatNBy2();
+    // TestRepeatNBy2();
+    TestPrintSetRange();
     getchar();
 
     return 0;

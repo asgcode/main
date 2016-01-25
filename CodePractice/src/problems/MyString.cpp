@@ -120,3 +120,8 @@ void reverseStringWords(char* str)
 
 #endif
 }
+
+void deleteSubString(char* str, char* substr)
+{
+
+}
