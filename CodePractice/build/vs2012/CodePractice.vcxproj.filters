@@ -57,6 +57,9 @@
     <ClInclude Include="..\..\include\Arrays.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\BitsMani.h">
+      <Filter>Source Files\Problems</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Main.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\problems\Arrays.cpp">
+      <Filter>Source Files\Problems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\problems\BitMani.cpp">
       <Filter>Source Files\Problems</Filter>
     </ClCompile>
   </ItemGroup>

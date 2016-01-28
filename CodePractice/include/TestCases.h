@@ -10,6 +10,7 @@
 #include "MultiThreading.h"
 #include "MyString.h"
 #include "Arrays.h"
+#include "BitsMani.h"
 
 void TestQuickFind(void)
 {
@@ -115,5 +116,10 @@ void TestRepeatNBy2()
 
     printArray(arr, size);
     printf("TestRepeatNBy2 %d \n", FindNElementRepeatNBy2Times(arr, size));
+}
+
+void TestPrintSetRange()
+{
+    printSetRange(6390);
 }
 #endif

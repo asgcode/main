@@ -64,6 +64,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Arrays.h" />
+    <ClInclude Include="..\..\include\BitsMani.h" />
     <ClInclude Include="..\..\include\Main.h" />
     <ClInclude Include="..\..\include\MultiThreading.h" />
     <ClInclude Include="..\..\include\MyString.h" />
@@ -79,6 +80,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\Main.cpp" />
     <ClCompile Include="..\..\src\problems\Arrays.cpp" />
+    <ClCompile Include="..\..\src\problems\BitMani.cpp" />
     <ClCompile Include="..\..\src\problems\ClosestCommonManager.cpp" />
     <ClCompile Include="..\..\src\problems\Multithreading.cpp" />
     <ClCompile Include="..\..\src\problems\MyString.cpp" />
