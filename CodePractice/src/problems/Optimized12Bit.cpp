@@ -7,14 +7,19 @@
 /// device. So we just want to read only configurable buffer size data from the file.
 /// Multiple fRead can slow down your performance so best would to keep the numbers of fRead
 /// as small as possible by keeping the size of MinEntriesSizeInBytes as big as feasible.
-enum
-{
-    MinEntriesSizeInBytes = 48
-};
 
 enum
 {
     NumOfQueueEntries = 32
+}
+enum
+{
+    NumBitsIn12BitEntries = 12
+}
+enum
+{
+    NumBitsInByte = 8
+}
 };
 
 typedef unsigned char UCHAR;
@@ -24,7 +29,6 @@ typedef struct _CircularBuffer
     UCHAR* pData;
     int    head;
     int    tail;
-    int    numValidEntries;
 }CircularBuffer;
 
 
@@ -120,7 +124,6 @@ void PerformSort(
     pCBuf->tail = 0;
 }
 
-
 void InsertElement(
                    CircularBuffer* pCBuf,
                    short num)
@@ -198,8 +201,9 @@ void WriteOutput(
                  int inputSizeInBytes,
                  CircularBuffer* pCBuf)
 {
-    FILE* hInFile = NULL;
-    int   i = 0;
+    FILE* hInFile               = NULL;
+    int   i                     = 0;
+    int   minEntriesSizeInBytes = (NumOfQueueEntries * NumBitsIn12BitEntries) / NumBitsInByte;
 
     /// TODO Perform Null check
     hInFile = fopen(pFileName, "wb");
@@ -240,7 +244,7 @@ void WriteOutput(
         i += 3;
 
         ///TODO Think of a better name for index i and try to do something more elegent than just resetting 
-        if (i >= MinEntriesSizeInBytes)
+        if (i >= minEntriesSizeInBytes)
         {
             i = 0;
         }
@@ -256,14 +260,15 @@ int PrintBest32(const char* pInFilePath, const char* pOutFilePath)
 {
     //Read the input from a file in configurable size of buffer
     /// TODO move inReadBuffer & heap from stack to dynamically allocated to avoid stack overflow.
-    UCHAR*         pReadBuffer         = NULL;
-    CircularBuffer CBuffer             = {0};
-    FILE*          hInFile             = NULL;
-    int            readSizeInBytes     = 0;
-    long           fileSizeInBytes     = 0;
-    int            readBufferStartByte = 0;
-    int            isCirBufSorted      = false;
-    long           outSizeInBytes      = 0;
+    UCHAR*         pReadBuffer           = NULL;
+    CircularBuffer CBuffer               = {0};
+    FILE*          hInFile               = NULL;
+    int            readSizeInBytes       = 0;
+    long           fileSizeInBytes       = 0;
+    int            readBufferStartByte   = 0;
+    int            isCirBufSorted        = false;
+    long           outSizeInBytes        = 0;
+    int            minEntriesSizeInBytes = (NumOfQueueEntries * NumBitsIn12BitEntries) / NumBitsInByte;
 
 
     /// TODO perform NULL check
