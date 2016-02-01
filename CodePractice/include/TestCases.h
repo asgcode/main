@@ -122,4 +122,9 @@ void TestPrintSetRange()
 {
     printSetRange(6390);
 }
+
+void TestPrint32Best()
+{
+    PrintBest32("test3.bin", "test3.out");
+}
 #endif

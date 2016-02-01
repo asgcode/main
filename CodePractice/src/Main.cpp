@@ -13,7 +13,8 @@ int main(int argc, int* argv[])
     // TestNonRepeatingChar();
     // TestReverseStringWords();
     // TestRepeatNBy2();
-    TestPrintSetRange();
+    // TestPrintSetRange();
+    TestPrint32Best();
     getchar();
 
     return 0;
