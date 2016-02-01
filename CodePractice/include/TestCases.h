@@ -125,6 +125,6 @@ void TestPrintSetRange()
 
 void TestPrint32Best()
 {
-    PrintBest32("test3.bin", "test3.out");
+    PrintBest32("test1.bin", "test1.out");
 }
 #endif

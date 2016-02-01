@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 /// Dont make assumption on input file size.It can be bigger than the avaliable memory on the
 /// device. So we just want to read only configurable buffer size data from the file.
@@ -20,22 +21,12 @@ typedef unsigned char UCHAR;
 
 typedef struct _CircularBuffer
 {
-    short* pData;
+    UCHAR* pData;
     int    head;
     int    tail;
+    int    numValidEntries;
 }CircularBuffer;
 
-
-
-void SwapShort(short* x, short*y)
-{
-    if (x != y)
-    {
-        *x = *x ^ *y;
-        *y = *x ^ *y;
-        *x = *x ^ *y;
-    }
-}
 
 inline short get12BitFrom3Bytes(
                                 UCHAR* pByte,
@@ -60,6 +51,48 @@ inline short get12BitFrom3Bytes(
     }
 }
 
+inline short GetValue(
+                      UCHAR* pByte,  /// Byte pointer
+                      int position)  /// 0 based position value
+{
+    int index = ((position) * 12)/8;
+    if (position % 2 == 0)
+    {
+       // Odd numbers are at first position of byte
+        return ((pByte[index] << 4) | ((pByte[index + 1] & (0xF << 4)) >> 4));
+    }
+    else
+    {
+         //Even numbers are at second half of byte
+        return (((pByte[index] & 0xF) << 8) | pByte[index + 1]);
+    }
+}
+
+inline void SetValue(
+                      UCHAR* pByte,  /// Byte pointer
+                      int position,  /// 0 based position value
+                      short num)
+
+{
+    int index = ((position) * 12)/8;
+    if (position % 2 == 0)
+    {
+        // Odd numbers's right most nibble would go in
+        // consequtive byte's left nibble.
+        pByte[index] = (num & 0xFF0) >> 4;
+        pByte[index + 1] = (pByte[index + 1] & 0x0F) | ((num & 0xF) << 4);
+        
+    }
+    else
+    {
+        // Even numbers's left most nibble is at second nibble of first byte
+        // and remaining byte at complete next index
+        pByte[index] = (pByte[index] & 0xF0) | ((num & 0xF00) >> 8);
+        pByte[index + 1] = num & 0xFF;
+    }
+
+}
+
 void PerformSort(
                  CircularBuffer* pCBuf,
                  int numEntries)
@@ -68,9 +101,13 @@ void PerformSort(
     {
         for (int j = i; j > 0; j--)
         {
-            if (pCBuf->pData[j] < pCBuf->pData[j-1])
+            short current  = GetValue(pCBuf->pData, j);
+            short previous = GetValue(pCBuf->pData, j-1);
+            if (current < previous)
             {
-                SwapShort(&pCBuf->pData[j], &pCBuf->pData[j-1]); 
+                // Swap 12 bit numbers
+                SetValue(pCBuf->pData, j, previous);
+                SetValue(pCBuf->pData, (j - 1), current);
             }
             else
             {
@@ -83,19 +120,20 @@ void PerformSort(
     pCBuf->tail = 0;
 }
 
+
 void InsertElement(
                    CircularBuffer* pCBuf,
                    short num)
 {
-    if (num <= pCBuf->pData[pCBuf->tail])
+    if (num <= GetValue(pCBuf->pData, pCBuf->tail))
     {
         return;
     }
-    else if (num >= pCBuf->pData[pCBuf->head])
+    else if (num >= GetValue(pCBuf->pData, pCBuf->head))
     {
         pCBuf->head = (pCBuf->head + 1)% NumOfQueueEntries;
         pCBuf->tail = (pCBuf->tail + 1)% NumOfQueueEntries;
-        pCBuf->pData[pCBuf->head] = num;
+        SetValue(pCBuf->pData, pCBuf->head, num);
     }
     else
     {
@@ -104,7 +142,7 @@ void InsertElement(
         // insert number into the queue
         while (i != pCBuf->head)
         {
-            if (num > pCBuf->pData[i])
+            if (num > GetValue(pCBuf->pData, i))
             {
                 continue;
             }
@@ -114,8 +152,8 @@ void InsertElement(
                 // Insert the element at i and move all the elements to right
                 while (j != ((pCBuf->tail+1) % NumOfQueueEntries))
                 {
-                    int temp = pCBuf->pData[j];
-                    pCBuf->pData[j] = num;
+                    short temp = GetValue(pCBuf->pData, j);
+                    SetValue(pCBuf->pData, j, num);
                     num = temp;
                     j = ((j + 1)% NumOfQueueEntries);
                 }
@@ -153,42 +191,6 @@ void InsertEntries(
 }
 
 
-void CopyIn16BitCirQueue(
-                         CircularBuffer* pCBuf,
-                         UCHAR* pInData,
-                         int dataSizeInBytes)
-{
-    int i        = 0;
-    int nextAvailIndex = 0;
-
-    assert(dataSizeInBytes <= MinEntriesSizeInBytes);
-
-    // There must be atleast two byte in input stream
-    while (dataSizeInBytes > 1)
-    {
-        // Get 3 bytes on each iteration, covert it 2 16 bit
-         pCBuf->pData[nextAvailIndex] = get12BitFrom3Bytes(&pInData[i], 0);
-
-        if (dataSizeInBytes > 2)
-        {
-            pCBuf->pData[nextAvailIndex + 1] = get12BitFrom3Bytes(&pInData[i], 1);
-        }
-        else
-        {
-            nextAvailIndex += 1;
-            break;
-        }
-
-        dataSizeInBytes -= 3;
-        i += 3;
-        nextAvailIndex += 2;
-    }
-
-    // Next avaliable index is same number of entries in circular buffer
-    PerformSort(pCBuf, nextAvailIndex);
-
-}
-
 void WriteOutput(
                  const char* pFileName,   ///TODO parameter comments
                  UCHAR * pInData,
@@ -207,7 +209,7 @@ void WriteOutput(
     ///TODO: Figure if duplicates, then 32 means 32 + duplicates?
     for (i = pCBuf->tail;; i = ((i + 1) % NumOfQueueEntries))
     {
-        fprintf(hInFile, "%d \r\n", pCBuf->pData[i]);
+        fprintf(hInFile, "%d \r\n", GetValue(pCBuf->pData, i));
 
         if (i == pCBuf->head)
         {
@@ -276,8 +278,7 @@ int PrintBest32(const char* pInFilePath, const char* pOutFilePath)
 
     if (readSizeInBytes > 1)
     {
-        int numOf12BitEntries = ((readSizeInBytes * 8)/12);
-        CBuffer.pData  = (short*) calloc (numOf12BitEntries, sizeof(short));
+        CBuffer.pData  = (UCHAR*) calloc (readSizeInBytes, sizeof(UCHAR));
         if (CBuffer.pData == NULL)
         {
             ///TODO CBuffer.pData NULL check
@@ -304,7 +305,8 @@ int PrintBest32(const char* pInFilePath, const char* pOutFilePath)
         if (isCirBufSorted == false)
         {
             ///TODO align discrepency between char and unsigned char
-            CopyIn16BitCirQueue(&CBuffer, pReadBuffer, readSizeInBytes);
+            memcpy(CBuffer.pData, pReadBuffer, readSizeInBytes);
+            PerformSort(&CBuffer, ((readSizeInBytes * 8)/12));
             isCirBufSorted = true;
         }
         else

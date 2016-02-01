@@ -194,15 +194,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\src\problems\Keep32.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\src\problems\Multithreading.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\..\src\problems\MyString.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\src\problems\Optimized12Bit.cpp"
 					>
 				</File>
 			</Filter>
