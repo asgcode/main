@@ -3,6 +3,7 @@
 
 typedef unsigned char UCHAR;
 typedef unsigned int  UINT;
+typedef short SHORT;
 typedef int INT;
 
 typedef enum
@@ -10,6 +11,7 @@ typedef enum
     FALSE = 0,
     TRUE  = 1
 }BOOL;
+
 typedef struct _CircularBuffer
 {
     UCHAR* pData;

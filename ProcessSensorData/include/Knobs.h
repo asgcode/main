@@ -15,8 +15,8 @@
  */
 enum
 {
-    NumOfBufEntries = 32
-}
+    MaxNumOfBufEntries = 32
+};
 
 /**
  * @brief Number of bits per entry
@@ -27,6 +27,14 @@ enum
     NumBitsPerEntries = 12
 }
 
+/**
+ * @brief Number of bits per Byte
+ *
+ */
+enum
+{
+    NumBitsPerByte = 8
+}
 /**
  * @brief Standard assumption on number of bits per byte
  *

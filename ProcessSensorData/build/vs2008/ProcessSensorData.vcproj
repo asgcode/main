@@ -171,6 +171,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\source\Main.c"
+				>
+			</File>
+			<File
 				RelativePath="..\..\source\ProcessSensorData.c"
 				>
 			</File>
