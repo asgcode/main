@@ -52,3 +52,39 @@ void printSetRange(int x)
 
     printf("\n");
 }
+
+int GiveOnceOnlyNumber(int* pArray, int size)
+{
+    int once = 0;
+    int twice = 0;
+    int common_bit = 0;
+    for (int i = 0; i < size; i++)
+    {
+        // if number is coming third time, twice would still keep that number in it.
+        twice = twice | (once & pArray[i]);
+        once = once ^ pArray[i];
+
+        // add twice happening number back to once.
+        // if there is nothing in twice we are good with below statement
+        // but after twice. when the number would come third time.
+        // So overall problem is find a way to nullify below statement when this number is happening the third time.
+        // clean up number from once without effecting it for the third time. 
+        // or clean up twice after the second instance.
+        // once = once ^ twice;
+
+        // clean up twice after the second instance.
+        // In below statement twice would essentially became same as once.
+        // twice = twice ^ pArray[i];
+        // how about?
+        // twice = 0;
+
+        // Or other strategy is basically remove number which are there in both once and twice from once.
+        common_bit = once & twice;
+
+        //remove common bit from once;
+        once = once & ~(common_bit);
+
+    }
+
+    return once;
+}

@@ -40,3 +40,8 @@ int ceil(int number, int divisor)
 {
     return (number + (divisor -1))/divisor;
 }
+
+int resetBit(int* p, int bit)
+{
+    *p &= ~(1 << bit);
+}

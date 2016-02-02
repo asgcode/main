@@ -122,4 +122,17 @@ void TestPrintSetRange()
 {
     printSetRange(6390);
 }
+
+void TestGiveOnceOnlyNumber()
+{
+    int arr[] = {3, 3, 3, 1, 4, 4, 4};
+    int size  = (sizeof(arr)/sizeof(arr[0]));
+
+    printf("TestGiveOnceOnlyNumber %d \n", GiveOnceOnlyNumber(arr, size));
+}
+
+void TestResetBit()
+{
+
+}
 #endif
