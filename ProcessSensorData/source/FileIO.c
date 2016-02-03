@@ -14,9 +14,13 @@ void CloseFile(FILE* hFile)
 
 UINT GetFileSizeInBytes(FILE* hFile)
 {
-    fseek(hInFile, 0, SEEK_END);
-    fileSizeInBytes = ftell(hInFile);
-    rewind(hInFile);
+    UINT fileSizeInBytes;
+
+    fseek(hFile, 0, SEEK_END);
+    fileSizeInBytes = ftell(hFile);
+    rewind(hFile);
+
+    return fileSizeInBytes;
 }
 
 UINT ReadInput(FILE*  hFile,
@@ -26,21 +30,20 @@ UINT ReadInput(FILE*  hFile,
     return fread(pData, sizeof(UCHAR), readSizeInBytes, hFile);
 }
 
-UINT WriteOutput(FILE*           hFile,   ///TODO parameter comments
-                 BOOL            sorted,
+VOID WriteOutput(FILE*           hFile,   ///TODO parameter comments
+                 BOOL            isSorted,
                  CircularBuffer* pCBuf)
 {
-    FILE* hInFile    = NULL;
     UINT  currentPos;
     UINT  numOfEntriesToWrite;
 
-    if (sorted)
+    if (isSorted)
     {
-        fputs("--Sorted Max 32 Values--\r\n", hInFile);
+        fputs("--Sorted Max 32 Values--\r\n", hFile);
     }
     else
     {
-        fputs("--Last 32 Values--\r\n", hInFile);
+        fputs("--Last 32 Values--\r\n", hFile);
     }
 
     currentPos          = pCBuf->tail;
@@ -48,8 +51,8 @@ UINT WriteOutput(FILE*           hFile,   ///TODO parameter comments
 
     while (numOfEntriesToWrite > 0)
     {
-        fprintf(hInFile, "%d \r\n", Get12BitEntry(pCBuf->pData, currentPos));
-        currentPos = ((currentPos + 1) % pCBuf->numEntries;
+        fprintf(hFile, "%d \r\n", Get12BitEntry(pCBuf->pData, currentPos));
+        currentPos = (currentPos + 1) % pCBuf->numEntries;
         numOfEntriesToWrite--;
     }
 }

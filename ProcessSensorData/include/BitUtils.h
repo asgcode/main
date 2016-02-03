@@ -3,7 +3,7 @@
 
 #include "Utils.h"
 
-inline SHORT Get12BitEntry(UCHAR* pByte, UINT position);
-inline UINT  Set12BitEntry(UCHAR* pByte, UINT position, SHORT value);
+USHORT Get12BitEntry(UCHAR* pByte, UINT position);
+VOID Set12BitEntry(UCHAR* pByte, UINT position, USHORT value);
 
 #endif

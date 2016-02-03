@@ -9,12 +9,15 @@
 #include "FileIO.h"
 #include "BitUtils.h"
 #include "Utils.h"
+#include "Knobs.h"
 
-static void PerformSort(CircularBuffer* pCBuf)
+static VOID PerformSort(CircularBuffer* pCBuf)
 {
-    for (int i = 0; i < pCBuf->numEntries; i++)
+    UINT i, j;
+
+    for (i = 0; i < pCBuf->numEntries; i++)
     {
-        for (int j = i; j > 0; j--)
+        for (j = i; j > 0; j--)
         {
             short current  = Get12BitEntry(pCBuf->pData, j);
             short previous = Get12BitEntry(pCBuf->pData, j-1);
@@ -39,53 +42,99 @@ static void PerformSort(CircularBuffer* pCBuf)
 
 static INT InsertEnryToSortedBuf(CircularBuffer* pCBuf, short num)
 {
-    if (pCBuf->numEntries != MaxNumOfBufEntries)
-    {
-        // Hard requirement to calculate correct circular buffer index 
-        return -1;
-    }
+    //if (pCBuf->numEntries != MaxNumOfBufEntries)
+    //{
+    //    // Hard requirement to calculate correct circular buffer index 
+    //    return -1;
+    //}
 
-    if (num <= Get12BitEntry(pCBuf->pData, pCBuf->tail))
+    if (pCBuf->numEntries == MaxNumOfBufEntries)
     {
-        return;
-    }
-    else if (num >= Get12BitEntry(pCBuf->pData, pCBuf->head))
-    {
-        pCBuf->head = (pCBuf->head + 1)% pCBuf->numEntries;
-        pCBuf->tail = (pCBuf->tail + 1)% pCBuf->numEntries;
-        Set12BitEntry(pCBuf->pData, pCBuf->head, num);
+        if (num <= Get12BitEntry(pCBuf->pData, pCBuf->tail))
+        {
+            return 0;
+        }
+        else if (num >= Get12BitEntry(pCBuf->pData, pCBuf->head))
+        {
+            pCBuf->head = (pCBuf->head + 1)% pCBuf->numEntries;
+            pCBuf->tail = (pCBuf->tail + 1)% pCBuf->numEntries;
+            Set12BitEntry(pCBuf->pData, pCBuf->head, num);
+        }
+        else
+        {
+
+
+            int i = ((pCBuf->tail + 1) % pCBuf->numEntries);
+
+            // insert number into the queue
+            while (i != pCBuf->head)
+            {
+                if (num <= Get12BitEntry(pCBuf->pData, i))
+                {
+                    int j = i;
+
+                    // Insert the element at i and move all the elements to right
+                    while (j != ((pCBuf->tail+1) % pCBuf->numEntries))
+                    {
+                        short temp = Get12BitEntry(pCBuf->pData, j);
+                        Set12BitEntry(pCBuf->pData, j, num);
+                        num = temp;
+                        j = ((j + 1)% pCBuf->numEntries);
+                    }
+
+                    pCBuf->head = (pCBuf->head + 1)% pCBuf->numEntries;
+                    pCBuf->tail = (pCBuf->tail + 1)% pCBuf->numEntries;
+
+                    break;
+                }
+
+                i = (i + 1)% pCBuf->numEntries;
+            }
+        }
     }
     else
     {
-        int i = ((pCBuf->tail + 1) % pCBuf->numEntries);
-
-        // insert number into the queue
-        while (i != pCBuf->head)
+        if (pCBuf->numEntries == 0)
         {
-            if (num > Get12BitEntry(pCBuf->pData, i))
-            {
-                continue;
-            }
-            else
-            {
-                int j = i;
-
-                // Insert the element at i and move all the elements to right
-                while (j != ((pCBuf->tail+1) % pCBuf->numEntries))
-                {
-                    short temp = Get12BitEntry(pCBuf->pData, j);
-                    Set12BitEntry(pCBuf->pData, j, num);
-                    num = temp;
-                    j = ((j + 1)% pCBuf->numEntries);
-                }
-                break;
-            }
-
-            i = (i + 1)% pCBuf->numEntries;
+            Set12BitEntry(pCBuf->pData, 0, num);
         }
+        else if (num >= Get12BitEntry(pCBuf->pData, pCBuf->head))
+        {
+            pCBuf->head++;
+            Set12BitEntry(pCBuf->pData, pCBuf->head, num);
+        }
+        else
+        {
+            // find first entry from tail to head bigger than num
+            // and insert right before it and shift numbers to right
+            // by one and increase the head count
+            UINT i = pCBuf->tail;
+
+            while (i <= pCBuf->head)
+            {
+                if (num <= Get12BitEntry(pCBuf->pData, i))
+                {
+                    UINT j = i;
+
+                    // Insert the element at i and move all the elements to right
+                    while (j <= (pCBuf->head + 1))
+                    {
+                        short temp = Get12BitEntry(pCBuf->pData, j);
+                        Set12BitEntry(pCBuf->pData, j, num);
+                        num = temp;
+                        j++;
+                    }
+
+                    pCBuf->head++;
+                    break;
+                }
+                i++;
+            }
+        }
+        pCBuf->numEntries++;
     }
 
-    return -1;
+    return 0;
 }
 
 
@@ -101,19 +150,13 @@ INT ProcessSensorData(UCHAR*          pReadData,
     }
 
 
-    if (pProcessedCBuf->pData == NULL)
+    /*if (pProcessedCBuf->numEntries == 0)
     {
-        pProcessedCBuf->pData  = (UCHAR*) calloc (sizeInBytes, sizeof(UCHAR));
-        if (pProcessedCBuf->pData == NULL)
-        {
-            ///TODO CBuffer.pData NULL check
-            return -1;
-        }
         pProcessedCBuf->numEntries = numEntries;
         memcpy(pProcessedCBuf->pData, pReadData, sizeInBytes);
         PerformSort(pProcessedCBuf);
     }
-    else
+    else*/
     {
         UINT readEntryNum = 0;
 

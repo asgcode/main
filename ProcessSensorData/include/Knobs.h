@@ -25,7 +25,7 @@ enum
 enum
 {
     NumBitsPerEntries = 12
-}
+};
 
 /**
  * @brief Number of bits per Byte
@@ -34,7 +34,7 @@ enum
 enum
 {
     NumBitsPerByte = 8
-}
+};
 /**
  * @brief Standard assumption on number of bits per byte
  *
@@ -42,6 +42,6 @@ enum
 enum
 {
     NumBitsInByte = 8
-}
+};
 
 #endif

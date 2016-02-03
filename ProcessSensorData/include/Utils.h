@@ -4,7 +4,9 @@
 typedef unsigned char UCHAR;
 typedef unsigned int  UINT;
 typedef short SHORT;
+typedef unsigned short USHORT;
 typedef int INT;
+typedef void VOID; 
 
 typedef enum
 {
