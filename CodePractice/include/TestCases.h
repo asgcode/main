@@ -135,4 +135,8 @@ void TestResetBit()
 {
 
 }
+void TestPrint32Best()
+{
+    PrintBest32("test1.bin", "test1.out");
+}
 #endif

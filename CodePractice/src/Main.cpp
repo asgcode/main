@@ -14,8 +14,8 @@ int main(int argc, int* argv[])
     // TestReverseStringWords();
     // TestRepeatNBy2();
     // TestPrintSetRange();
-    TestResetBit();
-
+    // TestResetBit();
+    // TestPrint32Best();
     getchar();
 
     return 0;
