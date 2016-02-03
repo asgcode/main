@@ -11,6 +11,20 @@
 #include "Utils.h"
 #include "Knobs.h"
 
+static VOID insertAndShiftRightCBuf(CircularBuffer* pCBuf, USHORT num, UINT pos)
+{
+    // Insert the element at i and move all the elements to right
+    UINT entriesInCBuf = pCBuf->numEntries;
+
+    while (j != ((pCBuf->tail+1) % MaxNumOfBufEntries))
+    {
+        short temp = Get12BitEntry(pCBuf->pData, j);
+        Set12BitEntry(pCBuf->pData, j, num);
+        num = temp;
+        j = ((j + 1)% MaxNumOfBufEntries);
+    }
+}
+
 static VOID PerformSort(CircularBuffer* pCBuf)
 {
     UINT i, j;
@@ -56,15 +70,15 @@ static INT InsertEnryToSortedBuf(CircularBuffer* pCBuf, short num)
         }
         else if (num >= Get12BitEntry(pCBuf->pData, pCBuf->head))
         {
-            pCBuf->head = (pCBuf->head + 1)% pCBuf->numEntries;
-            pCBuf->tail = (pCBuf->tail + 1)% pCBuf->numEntries;
+            pCBuf->head = (pCBuf->head + 1)% MaxNumOfBufEntries;
+            pCBuf->tail = (pCBuf->tail + 1)% MaxNumOfBufEntries;
             Set12BitEntry(pCBuf->pData, pCBuf->head, num);
         }
         else
         {
 
 
-            int i = ((pCBuf->tail + 1) % pCBuf->numEntries);
+            int i = ((pCBuf->tail + 1) % MaxNumOfBufEntries);
 
             // insert number into the queue
             while (i != pCBuf->head)
@@ -74,21 +88,21 @@ static INT InsertEnryToSortedBuf(CircularBuffer* pCBuf, short num)
                     int j = i;
 
                     // Insert the element at i and move all the elements to right
-                    while (j != ((pCBuf->tail+1) % pCBuf->numEntries))
+                    while (j != ((pCBuf->tail+1) % MaxNumOfBufEntries))
                     {
                         short temp = Get12BitEntry(pCBuf->pData, j);
                         Set12BitEntry(pCBuf->pData, j, num);
                         num = temp;
-                        j = ((j + 1)% pCBuf->numEntries);
+                        j = ((j + 1)% MaxNumOfBufEntries);
                     }
 
-                    pCBuf->head = (pCBuf->head + 1)% pCBuf->numEntries;
-                    pCBuf->tail = (pCBuf->tail + 1)% pCBuf->numEntries;
+                    pCBuf->head = (pCBuf->head + 1)% MaxNumOfBufEntries;
+                    pCBuf->tail = (pCBuf->tail + 1)% MaxNumOfBufEntries;
 
                     break;
                 }
 
-                i = (i + 1)% pCBuf->numEntries;
+                i = (i + 1)% MaxNumOfBufEntries;
             }
         }
     }
