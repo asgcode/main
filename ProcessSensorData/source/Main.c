@@ -8,7 +8,7 @@
 #include "ProcessSensor.h"
 
 
-int main()
+INT TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOutputFileName)
 {
     FILE* hInputFile;
     FILE* hOutputFile;
@@ -18,14 +18,14 @@ int main()
     CircularBuffer cProcessedBuf;
     BOOL status = TRUE;
 
-    hInputFile = OpenFile("C:\\code\\asgcode\\main\\ProcessSensorData\\samples\\test1.bin", "rb");
+    hInputFile = OpenFile(pInputFileName, "rb");
     if (hInputFile == NULL)
     {
         printf("ERROR: Failed to open input file %s", __LINE__);
         status = FALSE;
     }
 
-    hOutputFile = OpenFile("C:\\code\\asgcode\\main\\ProcessSensorData\\samples\\test1.out", "wb");
+    hOutputFile = OpenFile(pOutputFileName, "wb");
     if (hOutputFile == NULL)
     {
         printf("ERROR: Failed to open output file %s", __LINE__);
@@ -85,6 +85,15 @@ int main()
     CloseFile(hOutputFile);
     CloseFile(hInputFile);
     free(cReadBuf.pData);
-    // free(cReadBuf.pData);
+    free(cProcessedBuf.pData);
+    return 0;
+}
+int main()
+{
+    TestReadSortAndWrite12BitNumbers("..//..//samples//test1.bin", "..//..//samples//test1.out");
+    TestReadSortAndWrite12BitNumbers("..//..//samples//test2.bin", "..//..//samples//test2.out");
+    TestReadSortAndWrite12BitNumbers("..//..//samples//test3.bin", "..//..//samples//test3.out");
+    TestReadSortAndWrite12BitNumbers("..//..//samples//test4.bin", "..//..//samples//test4.out");
+    getchar();
 
 }

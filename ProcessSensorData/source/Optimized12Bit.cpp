@@ -11,15 +11,16 @@
 enum
 {
     NumOfQueueEntries = 32
-}
+};
+
 enum
 {
     NumBitsIn12BitEntries = 12
-}
+};
+
 enum
 {
     NumBitsInByte = 8
-}
 };
 
 typedef unsigned char UCHAR;

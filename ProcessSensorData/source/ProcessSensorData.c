@@ -11,17 +11,31 @@
 #include "Utils.h"
 #include "Knobs.h"
 
-static VOID insertAndShiftRightCBuf(CircularBuffer* pCBuf, USHORT num, UINT pos)
+/*******************************************************************************************************************************
+*   insertAndShiftRightCBuf
+*
+*   @brief
+*       insert a number to the circular buffer and shifts all the entries to the right
+*
+*   @return
+*       N/A
+*
+*******************************************************************************************************************************/
+static VOID insertAndShiftRightCBuf(CircularBuffer* pCBuf, ///< Buffer in which number needs to be inserted 
+                                    USHORT num,            ///< Number to be inserted
+                                    UINT pos)              ///< 0 based index at which number needs to be inserted
 {
-    // Insert the element at i and move all the elements to right
     UINT entriesInCBuf = pCBuf->numEntries;
+    UINT maxAllowedShifts = (MaxNumOfBufEntries > entriesInCBuf) ? entriesInCBuf :  (MaxNumOfBufEntries - 1);
 
-    while (j != ((pCBuf->tail+1) % MaxNumOfBufEntries))
+    // Insert at given index and keep moving numbers to right until we hit last entry in the buffer
+    while (pos <= maxAllowedShifts)
     {
-        short temp = Get12BitEntry(pCBuf->pData, j);
-        Set12BitEntry(pCBuf->pData, j, num);
-        num = temp;
-        j = ((j + 1)% MaxNumOfBufEntries);
+        USHORT tmp = Get12BitEntry(pCBuf->pData, pos);
+        Set12BitEntry(pCBuf->pData, pos, num);
+        num = tmp;
+        pos = ((pos + 1) % MaxNumOfBufEntries);
+        maxAllowedShifts--;
     }
 }
 
@@ -87,14 +101,16 @@ static INT InsertEnryToSortedBuf(CircularBuffer* pCBuf, short num)
                 {
                     int j = i;
 
-                    // Insert the element at i and move all the elements to right
-                    while (j != ((pCBuf->tail+1) % MaxNumOfBufEntries))
-                    {
-                        short temp = Get12BitEntry(pCBuf->pData, j);
-                        Set12BitEntry(pCBuf->pData, j, num);
-                        num = temp;
-                        j = ((j + 1)% MaxNumOfBufEntries);
-                    }
+                    //// Insert the element at i and move all the elements to right
+                    //while (j != ((pCBuf->tail+1) % MaxNumOfBufEntries))
+                    //{
+                    //    short temp = Get12BitEntry(pCBuf->pData, j);
+                    //    Set12BitEntry(pCBuf->pData, j, num);
+                    //    num = temp;
+                    //    j = ((j + 1)% MaxNumOfBufEntries);
+                    //}
+
+                    insertAndShiftRightCBuf(pCBuf, num, j);
 
                     pCBuf->head = (pCBuf->head + 1)% MaxNumOfBufEntries;
                     pCBuf->tail = (pCBuf->tail + 1)% MaxNumOfBufEntries;
@@ -130,14 +146,16 @@ static INT InsertEnryToSortedBuf(CircularBuffer* pCBuf, short num)
                 {
                     UINT j = i;
 
-                    // Insert the element at i and move all the elements to right
-                    while (j <= (pCBuf->head + 1))
-                    {
-                        short temp = Get12BitEntry(pCBuf->pData, j);
-                        Set12BitEntry(pCBuf->pData, j, num);
-                        num = temp;
-                        j++;
-                    }
+                    //// Insert the element at i and move all the elements to right
+                    //while (j <= (pCBuf->head + 1))
+                    //{
+                    //    short temp = Get12BitEntry(pCBuf->pData, j);
+                    //    Set12BitEntry(pCBuf->pData, j, num);
+                    //    num = temp;
+                    //    j++;
+                    //}
+
+                    insertAndShiftRightCBuf(pCBuf, num, j);
 
                     pCBuf->head++;
                     break;
