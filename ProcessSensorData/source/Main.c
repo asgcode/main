@@ -12,11 +12,12 @@ INT TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOu
 {
     FILE* hInputFile;
     FILE* hOutputFile;
-    UINT  sizeInBytes, maxCBufSizeInBytes, processCBufSizeInBytes;
+    UINT  totalSizeInBytes, allocCBufSizeInBytes;
     UINT  totalNumEntries;
     CircularBuffer cReadBuf;
     CircularBuffer cProcessedBuf;
     BOOL status = TRUE;
+    const UINT maxCBufSizeInBytes = (MaxNumOfBufEntries * NumBitsPerEntries)/(NumBitsPerByte);
 
     hInputFile = OpenFile(pInputFileName, "rb");
     if (hInputFile == NULL)
@@ -34,22 +35,23 @@ INT TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOu
 
     if (status == TRUE)
     {
-        sizeInBytes = GetFileSizeInBytes(hInputFile);
+        totalSizeInBytes = GetFileSizeInBytes(hInputFile);
         memset(&cReadBuf, 0x0, sizeof(CircularBuffer));
         memset(&cProcessedBuf, 0x0, sizeof(CircularBuffer));
 
-        maxCBufSizeInBytes = (MaxNumOfBufEntries * NumBitsPerEntries)/(NumBitsPerByte);
-        totalNumEntries    = (sizeInBytes * NumBitsPerByte)/(NumBitsPerEntries);
+        totalNumEntries    = (totalSizeInBytes * NumBitsPerByte)/(NumBitsPerEntries);
+        // Maximum we should allocate 12 DWORDs for each read and data processing circular buffer
+        allocCBufSizeInBytes = (totalSizeInBytes > maxCBufSizeInBytes) ? maxCBufSizeInBytes : totalSizeInBytes;
 
-        processCBufSizeInBytes = (sizeInBytes > maxCBufSizeInBytes) ? maxCBufSizeInBytes : sizeInBytes;
+        cReadBuf.numEntries = (totalNumEntries > MaxNumOfBufEntries) ? MaxNumOfBufEntries : totalNumEntries;
 
-        cReadBuf.pData = (UCHAR*) malloc(sizeInBytes * sizeof(UCHAR));
+        cReadBuf.pData = (UCHAR*) malloc(allocCBufSizeInBytes * sizeof(UCHAR));
         if (cReadBuf.pData == NULL)
         {
             printf("ERROR: Out of memory");
             status = FALSE;
         }
-        cProcessedBuf.pData = (UCHAR*) malloc(sizeInBytes * sizeof(UCHAR));
+        cProcessedBuf.pData = (UCHAR*) malloc(allocCBufSizeInBytes * sizeof(UCHAR));
         if (cProcessedBuf.pData == NULL)
         {
             printf("ERROR: Out of memory");
@@ -59,26 +61,28 @@ INT TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOu
 
     if (status == TRUE)
     {
-        UINT readSize, readEntries;
+        UINT readSize, lastReadEntries;
 
-        while (sizeInBytes != 0)
+        while (totalSizeInBytes != 0)
         {
-            readSize = (sizeInBytes > processCBufSizeInBytes) ? processCBufSizeInBytes : sizeInBytes;
+            readSize = (totalSizeInBytes > allocCBufSizeInBytes) ? allocCBufSizeInBytes : totalSizeInBytes;
             ReadInput(hInputFile, cReadBuf.pData, readSize);
 
-            ProcessSensorData(cReadBuf.pData, readSize, &cProcessedBuf);
-            sizeInBytes -= readSize;
-        }
-
-        readEntries = (readSize * NumBitsPerByte)/(NumBitsPerEntries);
-
-        cReadBuf.numEntries = (totalNumEntries > MaxNumOfBufEntries) ? MaxNumOfBufEntries : readEntries;
-        if (totalNumEntries > MaxNumOfBufEntries)
-        {
-            cReadBuf.tail = readEntries % MaxNumOfBufEntries;
+            ProcessSensorData(&cReadBuf, &cProcessedBuf);
+            totalSizeInBytes -= readSize;
         }
 
         WriteOutput(hOutputFile, TRUE, &cProcessedBuf);
+
+        lastReadEntries = (readSize * NumBitsPerByte)/(NumBitsPerEntries);
+
+        // Move tail to just after the last read entries if
+        if (totalNumEntries > MaxNumOfBufEntries)
+        {
+            // Set 
+            cReadBuf.tail = lastReadEntries % MaxNumOfBufEntries;
+        }
+
         WriteOutput(hOutputFile, FALSE, &cReadBuf);
     }
 

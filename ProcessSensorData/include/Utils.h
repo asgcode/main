@@ -20,7 +20,6 @@ typedef struct _CircularBuffer
     UINT   head;
     UINT   tail;
     UINT   numEntries;
-    UINT   entrySizeinBits;
 }CircularBuffer;
 
 #endif

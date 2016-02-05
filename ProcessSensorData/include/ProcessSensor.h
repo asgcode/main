@@ -3,5 +3,5 @@
 
 #include "Utils.h"
 
-INT ProcessSensorData(UCHAR* pReadData, UINT sizeInBytes, CircularBuffer* pProcessedCBuf);
+INT ProcessSensorData(CircularBuffer* pReadCBuf, CircularBuffer* pProcessedCBuf);
 #endif
