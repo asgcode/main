@@ -1,10 +1,11 @@
 #include "BitUtils.h"
+#include "Knobs.h"
 
 
 USHORT Get12BitEntry(UCHAR* pByte, UINT position)
 {
-    int index = ((position) * 12)/8;
-    if (position % 2 == 0)
+    UINT index = ((position) * 12)/8;
+    if ((position & 1) == 0)
     {
         // Odd numbers are at first position of byte
         return ((pByte[index] << 4) | ((pByte[index + 1] & (0xF << 4)) >> 4));
@@ -17,8 +18,8 @@ USHORT Get12BitEntry(UCHAR* pByte, UINT position)
 }
 VOID Set12BitEntry(UCHAR* pByte, UINT position, USHORT value)
 {
-    int index = ((position) * 12)/8;
-    if (position % 2 == 0)
+    UINT index = ((position) * 12)/8;
+    if ((position & 1) == 0)
     {
         // Odd numbers's right most nibble would go in
         // consequtive byte's left nibble.
@@ -34,4 +35,21 @@ VOID Set12BitEntry(UCHAR* pByte, UINT position, USHORT value)
         pByte[index + 1] = value & 0xFF;
     }
 
+}
+
+UINT ConvertBytesToEntries(UINT numBytes)
+{
+    return (numBytes * NumBitsPerByte)/(NumBitsPerEntries);
+}
+
+UINT ConvertEntriesToByte(UINT numEntries)
+{
+    if ((numEntries & 1) == 0)
+    {
+        return ((numEntries * NumBitsPerEntries)/(NumBitsPerByte));
+    }
+    else
+    {
+        return (((numEntries * NumBitsPerEntries)/(NumBitsPerByte)) + 1);
+    }
 }

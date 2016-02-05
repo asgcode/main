@@ -12,7 +12,7 @@ void CloseFile(FILE* hFile)
   fclose(hFile);
 }
 
-UINT GetFileSizeInBytes(FILE* hFile)
+UINT GetFileEntries(FILE* hFile)
 {
     UINT fileSizeInBytes;
 
@@ -20,14 +20,14 @@ UINT GetFileSizeInBytes(FILE* hFile)
     fileSizeInBytes = ftell(hFile);
     rewind(hFile);
 
-    return fileSizeInBytes;
+    return ConvertBytesToEntries(fileSizeInBytes);
 }
 
 UINT ReadInput(FILE*  hFile,
-               UCHAR* pData,
-               UINT   readSizeInBytes)
+               CircularBuffer* pCBuf)
 {
-    return fread(pData, sizeof(UCHAR), readSizeInBytes, hFile);
+
+    return fread(pCBuf->pData, sizeof(UCHAR), ConvertEntriesToByte(pCBuf->numEntries), hFile);
 }
 
 VOID WriteOutput(FILE*           hFile,   ///TODO parameter comments
