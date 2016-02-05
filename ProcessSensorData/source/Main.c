@@ -109,7 +109,7 @@ int main()
     TestReadSortAndWrite12BitNumbers("..//..//samples//test4.bin", "..//..//samples//test4.out");
     TestReadSortAndWrite12BitNumbers("..//..//samples//test5.bin", "..//..//samples//test5.out");
     TestReadSortAndWrite12BitNumbers("..//..//samples//test6.bin", "..//..//samples//test6.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test7.bin", "..//..//samples//test7.out");
+    // TestReadSortAndWrite12BitNumbers("..//..//samples//test7.bin", "..//..//samples//test7.out");
     getchar();
 
 }

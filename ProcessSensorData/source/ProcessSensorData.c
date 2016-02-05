@@ -1,10 +1,12 @@
-/** @file ProcessSensorData.c
- *  @brief Entry routine for processing the sensor data
+/*******************************************************************************************************************************
+ *  @file  ProcessSensorData.c
+ *  @brief Provides a public routine for processing the sensor data by first reading the data from a input unordered circular
+ *         buffer and copy it to ordered circular buffer. Ordered circular buffer can keep maximum 32, 12 bit unsigned entries.
+ *         Once the buffer gets full, it would accept only those entry which are at least bigger than its minimum entry. Thus
+ *         providing constant insertion time per entry for mostly sorted data which usually the case with fitness sensors.
  *
- *  This file process the input data to retrieve max NumOfBufEntries
- *  and keep track of last NumOfBufEntries.
  *
- */
+ *******************************************************************************************************************************/
 
 #include "FileIO.h"
 #include "BitUtils.h"
@@ -12,48 +14,69 @@
 #include "Knobs.h"
 
 /*******************************************************************************************************************************
-*   insertAndShiftRightCBuf
+*   InsertByRightShift
 *
 *   @brief
-*       insert a number to the circular buffer and shifts all the entries to the right
+*       Insert a number to the given ordered circular buffer by shifting all of its right entries by one position to the right.
+*       If no more room on right side, entries would overflow to left most position just like a traditional circular buffer
 *
 *   @return
 *       N/A
 *
 *******************************************************************************************************************************/
-static VOID insertAndShiftRightCBuf(CircularBuffer* pCBuf, ///< Buffer in which number needs to be inserted 
-                                    USHORT num,            ///< Number to be inserted
-                                    UINT pos)              ///< 0 based index at which number needs to be inserted
+static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< Buffer in which number needs to be inserted 
+                               USHORT          entryValue, ///< Value of the entry which needs to be inserted
+                               UINT            entryPos)   ///< Position at which the entry needs to be inserted
 {
-    UINT entriesInCBuf    = pCBuf->numEntries;
-    UINT maxAllowedShifts = (MaxNumOfBufEntries > entriesInCBuf) ? (entriesInCBuf) :  (MaxNumOfBufEntries - 1);
-    UINT startPos         = pos;
+    UINT entriesInCBuf         = pCBuf->numEntries;
+    UINT maxAllowedRightShifts = (MaxNumOfBufEntries > entriesInCBuf) ? (entriesInCBuf) :  (MaxNumOfBufEntries - 1);
+    UINT nextEntryPos          = entryPos;
+    UINT nextEntryVal          = entryValue;
 
-    // Insert at given index and keep moving numbers to right until we either hit last entry in the buffer
+    // Insert at entryPos index and keep moving numbers to right until we either hit last entry in the buffer
     // or come back to the same pos where we started.
     do
     {
-        USHORT tmp = Get12BitEntry(pCBuf->pData, pos);
-        Set12BitEntry(pCBuf->pData, pos, num);
-        num = tmp;
-        pos = ((pos + 1) % MaxNumOfBufEntries);
+        USHORT tmp = Get12BitEntry(pCBuf->pData, nextEntryPos);
+        Set12BitEntry(pCBuf->pData, nextEntryPos, nextEntryVal);
+        nextEntryVal = tmp;
+        nextEntryPos = (nextEntryPos + 1) % MaxNumOfBufEntries;
 
-    }while ((pos != startPos) && (pos <= maxAllowedShifts));
+    }while ((nextEntryPos != entryPos) && (nextEntryPos <= maxAllowedRightShifts));
 
     // We inserted something so head must always advance
-    pCBuf->head = (pCBuf->head + 1)% MaxNumOfBufEntries;
+    pCBuf->head = (pCBuf->head + 1) % MaxNumOfBufEntries;
 }
 
+/*******************************************************************************************************************************
+*   InsertEnryToSortedCBuf
+*
+*   @brief
+*       Insert a entry to the given ordered or sorted circular buffer. Entry would gets inserted only if its bigger than its
+*       minimum or left most (in other words entry at tail position) value.
+*
+*   @return
+*       N/A
+*
+*******************************************************************************************************************************/
 static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
-                                  short num)
+                                  USHORT          entryValue)
 {
-    // First number in the queue
+    // First some validity checks
+    if ((entryValue & 0xF000) != 0)
+    {
+        // Invalid entry
+        printf("ERRROR: Only 12 bits entries are accepted \r\n");
+        return -1;
+    }
+
+    // First number in the circular buffer
     if (pCBuf->numEntries == 0)
     {
-        Set12BitEntry(pCBuf->pData, 0, num);
+        Set12BitEntry(pCBuf->pData, 0, entryValue);
     }
     // number is less than tail
-    else if (num <= Get12BitEntry(pCBuf->pData, pCBuf->tail))
+    else if (entryValue <= Get12BitEntry(pCBuf->pData, pCBuf->tail))
     {
         if (pCBuf->numEntries == MaxNumOfBufEntries)
         {
@@ -64,14 +87,14 @@ static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
         else
         {
             // Just insert it at tail
-            insertAndShiftRightCBuf(pCBuf, num, pCBuf->tail);
+            InsertByRightShift(pCBuf, entryValue, pCBuf->tail);
         }
     }
     // Bigger than head just insert at right end
-    else if (num >= Get12BitEntry(pCBuf->pData, pCBuf->head))
+    else if (entryValue >= Get12BitEntry(pCBuf->pData, pCBuf->head))
     {
         pCBuf->head = (pCBuf->head + 1)% MaxNumOfBufEntries;
-        Set12BitEntry(pCBuf->pData, pCBuf->head, num);
+        Set12BitEntry(pCBuf->pData, pCBuf->head, entryValue);
 
         if (pCBuf->numEntries == MaxNumOfBufEntries)
         {
@@ -92,9 +115,9 @@ static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
         while (i != pCBuf->head)
         {
             // Find first entry bigger or same as number
-            if (num <= Get12BitEntry(pCBuf->pData, i))
+            if (entryValue <= Get12BitEntry(pCBuf->pData, i))
             {
-                insertAndShiftRightCBuf(pCBuf, num, i);
+                InsertByRightShift(pCBuf, entryValue, i);
                 if (pCBuf->numEntries == MaxNumOfBufEntries)
                 {
                     // If queue already full, entry at the tail got overwritten
