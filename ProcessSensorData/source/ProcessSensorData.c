@@ -1,17 +1,15 @@
 /*******************************************************************************************************************************
- *  @file  ProcessSensorData.c
- *  @brief Provides a public routine for processing the sensor data by first reading the data from a input unordered circular
- *         buffer and copy it to ordered circular buffer. Ordered circular buffer can keep maximum 32, 12 bit unsigned entries.
- *         Once the buffer gets full, it would accept only those entry which are at least bigger than its minimum entry. Thus
- *         providing constant insertion time per entry for mostly sorted data which usually the case with fitness sensors.
+ *  @file   ProcessSensorData.c
+ *  @brief  Defines a public routine for processing the sensor data by first reading the data from a input unordered circular
+ *          buffer and copy it to ordered circular buffer. Ordered circular buffer can keep maximum 32, 12 bit unsigned entries.
+ *          Once the buffer gets full, it would accept only those entry which are at least bigger than its minimum entry. Thus
+ *          providing constant insertion time per entry for mostly sorted data which usually the case with fitness sensors.
+ *  @author Amit Bansal
  *
  *
  *******************************************************************************************************************************/
-
 #include "FileIO.h"
-#include "BitUtils.h"
-#include "Utils.h"
-#include "Knobs.h"
+#include "CommonUtils.h"
 
 /*******************************************************************************************************************************
 *   InsertByRightShift
@@ -24,17 +22,21 @@
 *       N/A
 *
 *******************************************************************************************************************************/
-static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< Buffer in which number needs to be inserted 
-                               USHORT          entryValue, ///< Value of the entry which needs to be inserted
-                               UINT            entryPos)   ///< Position at which the entry needs to be inserted
+static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< [in] Buffer in which number needs to be inserted 
+                               USHORT          entryValue, ///< [in] Value of the entry which needs to be inserted
+                               UINT            entryPos)   ///< [in] Position at which the entry needs to be inserted
 {
     UINT entriesInCBuf         = pCBuf->numEntries;
-    UINT maxAllowedRightShifts = (MaxNumOfBufEntries > entriesInCBuf) ? (entriesInCBuf) :  (MaxNumOfBufEntries - 1);
+    UINT maxAllowedRightShifts = (MaxNumOfBufEntries > entriesInCBuf) ? (entriesInCBuf) : (MaxNumOfBufEntries - 1);
     UINT nextEntryPos          = entryPos;
     UINT nextEntryVal          = entryValue;
 
+    // Something is going to be inserted so head must always advance
+    pCBuf->head = (pCBuf->head + 1) % MaxNumOfBufEntries;
+
+
     // Insert at entryPos index and keep moving numbers to right until we either hit last entry in the buffer
-    // or come back to the same pos where we started.
+    // or until we overwrite the tail with shifted head value
     do
     {
         USHORT tmp = Get12BitEntry(pCBuf->pData, nextEntryPos);
@@ -42,10 +44,8 @@ static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< Buffer in which 
         nextEntryVal = tmp;
         nextEntryPos = (nextEntryPos + 1) % MaxNumOfBufEntries;
 
-    }while ((nextEntryPos != entryPos) && (nextEntryPos <= maxAllowedRightShifts));
+    }while (nextEntryPos != ((pCBuf->head + 1) % MaxNumOfBufEntries));
 
-    // We inserted something so head must always advance
-    pCBuf->head = (pCBuf->head + 1) % MaxNumOfBufEntries;
 }
 
 /*******************************************************************************************************************************
@@ -56,11 +56,11 @@ static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< Buffer in which 
 *       minimum or left most (in other words entry at tail position) value.
 *
 *   @return
-*       N/A
+*       -1 if inserted number is invalid or 0 upon success
 *
 *******************************************************************************************************************************/
-static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
-                                  USHORT          entryValue)
+static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,         //< [in] Circular buffer in which entry needs to be inserted
+                                  USHORT          entryValue)    //< [in] 12 bit value that needs to be inserted
 {
     // First some validity checks
     if ((entryValue & 0xF000) != 0)
@@ -122,7 +122,7 @@ static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
                 {
                     // If queue already full, entry at the tail got overwritten
                     // so update the tail
-                    pCBuf->tail = (pCBuf->tail + 1)% MaxNumOfBufEntries;
+                    pCBuf->tail = (pCBuf->tail + 1) % MaxNumOfBufEntries;
                 }
                 break;
             }
@@ -139,24 +139,37 @@ static INT InsertEnryToSortedCBuf(CircularBuffer* pCBuf,
     return 0;
 }
 
-
-INT ProcessSensorData(CircularBuffer* pReadCBuf,
-                      CircularBuffer* pProcessedCBuf)   /// Pointer to processed output data
+/*******************************************************************************************************************************
+*   ProcessSensorData
+*
+*   @brief
+*       Entry point routine for processing the sensor data. It receives pointer to unordered read circular buffer at the input
+*       and outputs a pointer to a ordered or sorted circular buffer. Client is responsible for allocating memory for both the
+*       input and output circular buffer. Output sorted circular buffer accepts only those entries from input read buffer which
+*       are greater than its least valued entry.
+*
+*   @return
+*       -1 if 
+*
+*******************************************************************************************************************************/
+INT ProcessSensorData(CircularBuffer* pReadCBuf,        /// [in]     Pointer to input unordered circular queue buffer
+                      CircularBuffer* pMaxSortedCBuf)   /// [in\out] Pointer to updated sorted max circular buffer
 {
-    UINT numEntries   = pReadCBuf->numEntries;
-    UINT readEntryNum = 0;
+    UINT numInputEntries = pReadCBuf->numEntries;
+    UINT readEntryNum    = 0;
 
-    if (numEntries < 1)
+    if ((numInputEntries < 1) || (pReadCBuf->pData == NULL) || (pMaxSortedCBuf->pData == NULL))
     {
+        printf("ERROR: Invalid input to %s \r\n", __FUNCTION__);
         return -1;
     }
 
-    while (numEntries > 0)
+    while (readEntryNum < numInputEntries)
     {
-        InsertEnryToSortedCBuf(pProcessedCBuf, Get12BitEntry(pReadCBuf->pData, readEntryNum));
+        InsertEnryToSortedCBuf(pMaxSortedCBuf, Get12BitEntry(pReadCBuf->pData, readEntryNum));
         readEntryNum++;
-        numEntries--;
     }
+
     return 0;
 }
 

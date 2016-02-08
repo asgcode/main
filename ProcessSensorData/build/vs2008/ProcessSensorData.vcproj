@@ -163,7 +163,7 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath="..\..\source\BitUtils.c"
+				RelativePath="..\..\source\CommonUtils.c"
 				>
 			</File>
 			<File
@@ -185,7 +185,7 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath="..\..\include\BitUtils.h"
+				RelativePath="..\..\include\CommonUtils.h"
 				>
 			</File>
 			<File
@@ -193,15 +193,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\include\Knobs.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\include\ProcessSensor.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\include\Utils.h"
 				>
 			</File>
 		</Filter>
