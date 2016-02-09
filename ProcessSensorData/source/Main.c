@@ -37,11 +37,20 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
     CircularBuffer cProcessedBuf = {0};
     BOOL           status        = TRUE;
 
-    hInputFile = OpenFile(pInputFileName, "rb");
-    if (hInputFile == NULL)
+    if ((pInputFileName == NULL) || (pOutputFileName == NULL))
     {
-        printf("ERROR: Failed to open input file \r\n");
+        printf("ERROR: Invalid input or output file \r\n");
         status = FALSE;
+    }
+
+    if (status == TRUE)
+    {
+        hInputFile = OpenFile(pInputFileName, "rb");
+        if (hInputFile == NULL)
+        {
+            printf("ERROR: Failed to open input file %s \r\n", pInputFileName);
+            status = FALSE;
+        }
     }
 
     if (status == TRUE)
@@ -49,7 +58,7 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
         hOutputFile = OpenFile(pOutputFileName, "wb");
         if (hOutputFile == NULL)
         {
-            printf("ERROR: Failed to open output file %s \r\n", __LINE__);
+            printf("ERROR: Failed to open output file %s", pOutputFileName);
             status = FALSE;
         }
     }
@@ -71,7 +80,7 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
         cReadBuf.pData = (UCHAR*) malloc(CONVERT_ENTRIES_TO_BYTE(maxBufEntries) * sizeof(UCHAR));
         if (cReadBuf.pData == NULL)
         {
-            printf("ERROR: Out of memory %s \r\n", __LINE__);
+            printf("ERROR: Unable to allocate 12 DWORDs for read circular buffer \r\n");
             status = FALSE;
         }
     }
@@ -81,7 +90,7 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
         cProcessedBuf.pData = (UCHAR*) malloc(CONVERT_ENTRIES_TO_BYTE(maxBufEntries) * sizeof(UCHAR));
         if (cProcessedBuf.pData == NULL)
         {
-            printf("ERROR: Out of memory %s \r\n", __LINE__);
+            printf("ERROR: Unable to allocate 12 DWORDs for sorted max circular buffer \r\n");
             status = FALSE;
         }
     }
@@ -172,5 +181,5 @@ int main()
     TestReadSortAndWrite12BitNumbers("..//..//samples//test7.bin", "..//..//samples//test7.out");
     TestReadSortAndWrite12BitNumbers("..//..//samples//bad.bin", "..//..//samples//bad.out");
     getchar();
-
+    return 0;
 }

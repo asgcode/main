@@ -26,14 +26,11 @@ static VOID InsertByRightShift(CircularBuffer* pCBuf,      ///< [in] Buffer in w
                                USHORT          entryValue, ///< [in] Value of the entry which needs to be inserted
                                UINT            entryPos)   ///< [in] Position at which the entry needs to be inserted
 {
-    UINT entriesInCBuf         = pCBuf->numEntries;
-    UINT maxAllowedRightShifts = (MaxNumOfBufEntries > entriesInCBuf) ? (entriesInCBuf) : (MaxNumOfBufEntries - 1);
-    UINT nextEntryPos          = entryPos;
-    UINT nextEntryVal          = entryValue;
+    UINT nextEntryPos = entryPos;
+    UINT nextEntryVal = entryValue;
 
     // Something is going to be inserted so head must always advance
     pCBuf->head = (pCBuf->head + 1) % MaxNumOfBufEntries;
-
 
     // Insert at entryPos index and keep moving numbers to right until we either hit last entry in the buffer
     // or until we overwrite the tail with shifted head value
