@@ -63,17 +63,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\source\BitUtils.c" />
+    <ClCompile Include="..\..\source\CommonUtils.c" />
     <ClCompile Include="..\..\source\FileIO.c" />
     <ClCompile Include="..\..\source\Main.c" />
     <ClCompile Include="..\..\source\ProcessSensorData.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\BitUtils.h" />
+    <ClInclude Include="..\..\include\CommonUtils.h" />
     <ClInclude Include="..\..\include\FileIO.h" />
-    <ClInclude Include="..\..\include\Knobs.h" />
     <ClInclude Include="..\..\include\ProcessSensor.h" />
-    <ClInclude Include="..\..\include\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\samples\test1.bin" />
