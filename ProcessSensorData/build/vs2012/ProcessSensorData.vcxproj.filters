@@ -39,18 +39,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\samples\test1.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\samples\test2.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\samples\test3.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\samples\test4.bin">
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>

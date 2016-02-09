@@ -73,12 +73,6 @@
     <ClInclude Include="..\..\include\FileIO.h" />
     <ClInclude Include="..\..\include\ProcessSensor.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\samples\test1.bin" />
-    <None Include="..\..\samples\test2.bin" />
-    <None Include="..\..\samples\test3.bin" />
-    <None Include="..\..\samples\test4.bin" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

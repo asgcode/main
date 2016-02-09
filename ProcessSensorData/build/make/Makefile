@@ -10,7 +10,7 @@ INCLUDE_PATH = ../../include
 
 # Source code path relative to Makefile
 VPATH        = ../../source
-OUT_DIR 	 = obj
+OBJ_DIR 	 = obj
 
 
 # Header files
@@ -29,13 +29,13 @@ SOURCES = \
 # Rules to convert sources to object file
 _OBJ = $(SOURCES:.c=.o)
 DEPS = $(patsubst %,$(INCLUDE_PATH)/%,$(_HEADERS))
-OBJ  = $(patsubst %,$(OUT_DIR)/%,$(_OBJ))
+OBJ  = $(patsubst %,$(OBJ_DIR)/%,$(_OBJ))
 
 # Compiler options, gcc compiler, enable warnings
 CC     = gcc
 CFLAGS = -I$(INCLUDE_PATH) -Wall
 
-$(OUT_DIR)/%.o: %.c $(DEPS)
+$(OBJ_DIR)/%.o: %.c $(DEPS)
 	@mkdir -p $(@D)
 	$(CC) -c -o $@ $< $(CFLAGS)
 
@@ -44,4 +44,4 @@ $(TARGET): $(OBJ)
 	gcc -o $@ $^ $(CFLAGS)
 
 clean:
-	rm -rf $(OUT_DIR) $(TARGET)
+	rm -rf $(OBJ_DIR) $(TARGET)

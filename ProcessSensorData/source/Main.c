@@ -28,7 +28,7 @@
 *       N/A
 *
 *******************************************************************************************************************************/
-VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOutputFileName)
+BOOL TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pOutputFileName)
 {
     UINT  totalNumEntries, maxBufEntries;
     FILE*          hInputFile    = NULL;
@@ -157,6 +157,8 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
 
     free(cProcessedBuf.pData);
     cProcessedBuf.pData = NULL;
+
+    return status;
 }
 
 /*******************************************************************************************************************************
@@ -170,16 +172,35 @@ VOID TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
 *
 *******************************************************************************************************************************/
 
-int main()
+int main(int argc, char* argv[])
 {
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test1.bin", "..//..//samples//test1.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test2.bin", "..//..//samples//test2.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test3.bin", "..//..//samples//test3.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test4.bin", "..//..//samples//test4.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test5.bin", "..//..//samples//test5.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test6.bin", "..//..//samples//test6.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//test7.bin", "..//..//samples//test7.out");
-    TestReadSortAndWrite12BitNumbers("..//..//samples//bad.bin", "..//..//samples//bad.out");
+    /*TestReadSortAndWrite12BitNumbers("..//..//input//test1.bin", "..//..//output//test1.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test2.bin", "..//..//output//test2.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test3.bin", "..//..//output//test3.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test4.bin", "..//..//output//test4.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test5.bin", "..//..//output//test5.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test6.bin", "..//..//output//test6.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//test7.bin", "..//..//output//test7.out");
+    TestReadSortAndWrite12BitNumbers("..//..//input//bad.bin"  , "..//..//output//bad.out");*/
+
+    if (argc != 3)
+    {
+        printf("Usage: ProcessSensorData <input file> <output file name> e.g. ProcessSensorData test1.bin test1.out \r\n");
+    }
+    else
+    {
+        if (0 == TestReadSortAndWrite12BitNumbers(argv[1], argv[2]))
+        {
+            printf("ERROR: %s execution unsuccessful \r\n", argv[0]); 
+        }
+        else
+        {
+           printf("%s execution successful \r\n", argv[0]);
+        }
+    }
+
+
+
     getchar();
     return 0;
 }

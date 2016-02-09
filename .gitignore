@@ -1,8 +1,10 @@
 Debug
 Release
+obj
 *.opensdf
 *.sdf
 *.suo
 *.ncb
 *.user
 *.out
+*.exe
