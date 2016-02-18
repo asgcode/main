@@ -21,7 +21,7 @@ USHORT Get12BitEntry(
                      UCHAR* pByte,             ///< pointer to the 12 bit entries array
                      UINT   position)          ///< location from which 12 bit number needs to be retrieved
 {
-    UINT index = ((position) * 12)/8;
+    UINT index = ((position) * NumBitsPerEntries)/NumBitsPerByte;
 
     // In a packed 12 bit array, even position are at first 12 bit of 3 bytes
     // and odd position are at second 12 bit of same 3 byte and this pattern
@@ -30,14 +30,14 @@ USHORT Get12BitEntry(
     {
         // To form 12 bit entry on even position take everything from first byte
         // and only the left nibble of the second byte.
-        return ((pByte[index] << 4) |
-                ((pByte[index + 1] & (0xF0)) >> 4));
+        return ((pByte[index] << NumBitsPerNibble) |
+                ((pByte[index + 1] & (0xF0)) >> NumBitsPerNibble));
     }
     else
     {
         // To form 12 bit entries on odd position, take only right nibble from first
         // byte and complete byte from the next byte
-        return (((pByte[index] & 0xF) << 8) | pByte[index + 1]);
+        return (((pByte[index] & 0xF) << NumBitsPerByte) | pByte[index + 1]);
     }
 }
 
@@ -56,17 +56,17 @@ VOID Set12BitEntry(
                    UINT   position,     ///< position at which given number needs to be written
                    USHORT value)        ///< value which needs to be written
 {
-    UINT index = ((position) * 12)/8;
+    UINT index = ((position) * NumBitsPerEntries)/NumBitsPerByte;
 
     if ((position & 1) == 0)
     {
-        pByte[index] = (value & 0xFF0) >> 4;
-        pByte[index + 1] = (pByte[index + 1] & 0x0F) | ((value & 0xF) << 4);
+        pByte[index] = (value & 0xFF0) >> NumBitsPerNibble;
+        pByte[index + 1] = (pByte[index + 1] & 0x0F) | ((value & 0xF) << NumBitsPerNibble);
         
     }
     else
     {
-        pByte[index] = (pByte[index] & 0xF0) | ((value & 0xF00) >> 8);
+        pByte[index] = (pByte[index] & 0xF0) | ((value & 0xF00) >> NumBitsPerByte);
         pByte[index + 1] = value & 0xFF;
     }
 

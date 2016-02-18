@@ -1,15 +1,15 @@
 Directory Structure:
 source  - all the c source code files, program entry point in Main.c
 include - all header files
-build   - Makefile\vs2012 files for the project
+build   - Makefile files for the project
 
 Overall design assumption:
 Design is best optimized for mostly sorted data (as it should be in the case of fitness sensors) so it uses ordered circular
 buffer to keep biggest 32, 12 bit entries\numbers. Also keeping memory constraints in mind, it allocates only two 12 DWORD size
 buffers, first one as unordered circular queue buffer to track last 32 read entries and other ordered circular buffer mentioned
 earlier to keep track of biggest 32 entries. It keeps the memory footprint to minimum at the cost of some extra bit
-manipulation to retrieve/compare/store 12 bit numbers, it shouldn't be too expensive otherwise we could have use 16 bit storage
-for unordered and ordered circular buffers.
+manipulation to retrieve/compare/store 12 bit numbers which shouldn't be too expensive otherwise we could have use 16 bit
+storage for unordered and ordered circular buffers.
 
 Usage:
 1) Build the program using provided build script (make or vs2012) of your choice.

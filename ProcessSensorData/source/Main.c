@@ -174,24 +174,15 @@ BOOL TestReadSortAndWrite12BitNumbers(const char* pInputFileName, const char* pO
 
 int main(int argc, char* argv[])
 {
-    /*TestReadSortAndWrite12BitNumbers("..//..//input//test1.bin", "..//..//output//test1.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test2.bin", "..//..//output//test2.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test3.bin", "..//..//output//test3.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test4.bin", "..//..//output//test4.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test5.bin", "..//..//output//test5.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test6.bin", "..//..//output//test6.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//test7.bin", "..//..//output//test7.out");
-    TestReadSortAndWrite12BitNumbers("..//..//input//bad.bin"  , "..//..//output//bad.out");*/
-
     if (argc != 3)
     {
-        printf("Usage: ProcessSensorData <input file> <output file name> e.g. ProcessSensorData test1.bin test1.out \r\n");
+        printf("Usage: ProcessSensorData <input file> <output file> e.g. ProcessSensorData test1.bin test1.out \r\n");
     }
     else
     {
         if (0 == TestReadSortAndWrite12BitNumbers(argv[1], argv[2]))
         {
-            printf("ERROR: %s execution unsuccessful \r\n", argv[0]); 
+           printf("ERROR: %s execution unsuccessful \r\n", argv[0]); 
         }
         else
         {
@@ -199,8 +190,5 @@ int main(int argc, char* argv[])
         }
     }
 
-
-
-    getchar();
     return 0;
 }
