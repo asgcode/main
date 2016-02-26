@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void printSetRange(int x)
+void PrintSetRange(int x)
 {
     int start = 0;
     int end = 0;

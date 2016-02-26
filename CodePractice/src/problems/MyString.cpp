@@ -61,7 +61,7 @@ void reverseWord(char* str, int start, int end)
 
     for (i = start, j = end; i < j; i++, j--)
     {
-        swapChar(&str[i], &str[j]);
+        SwapChar(&str[i], &str[j]);
     }
 }
 

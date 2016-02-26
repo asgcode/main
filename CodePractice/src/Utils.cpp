@@ -1,7 +1,7 @@
 
 #include <stdio.h>
 
-void swap(int* x, int*y)
+void Swap(int* x, int*y)
 {
     if (x != y)
     {
@@ -11,7 +11,7 @@ void swap(int* x, int*y)
     }
 }
 
-void swapChar(char* x, char*y)
+void SwapChar(char* x, char*y)
 {
    if (x != y)
     {
@@ -26,7 +26,7 @@ void swapChar(char* x, char*y)
 }
 
 
-void printArray(int* arr, int size)
+void PrintArray(int* arr, int size)
 {
     printf("\n");
     for (int i = 0; i < size; i++)
@@ -36,12 +36,13 @@ void printArray(int* arr, int size)
     printf("\n");
 }
 
-int ceil(int number, int divisor)
+int Ceil(int number, int divisor)
 {
     return (number + (divisor -1))/divisor;
 }
 
-int resetBit(int* p, int bit)
+void ResetBit(int* p, int bit)
 {
     *p &= ~(1 << bit);
+    
 }

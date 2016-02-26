@@ -6,7 +6,7 @@ static OS_HANDLE  hExitMainThreadSema;
 static OS_HANDLE  hEvenSema;
 static OS_HANDLE  hOddSema;
 
-void printEvenBusyWait(void* arg)
+void PrintEvenBusyWait(void* arg)
 {
     int* pInt = (int*)arg;
     while ((*pInt) <= 1000)
@@ -22,7 +22,7 @@ void printEvenBusyWait(void* arg)
     TerminateThread();
 }
 
-void printOddBusyWait(void* arg)
+void PrintOddBusyWait(void* arg)
 {
     int* pInt = (int*)arg;
     while ((*pInt) < 1000)
@@ -38,13 +38,13 @@ void printOddBusyWait(void* arg)
 }
 
 
-void printOddEvenBusyWait()
+void PrintOddEvenBusyWait()
 {
     static int i = 0;
 
     // Create two threads, both sharing global data 
-     CreateThread( printEvenBusyWait, 0, &i );
-     CreateThread( printOddBusyWait, 0, &i );
+     CreateThread( PrintEvenBusyWait, 0, &i );
+     CreateThread( PrintOddBusyWait, 0, &i );
 
      OsWaitForSingleObject( hExitMainThreadSema, INFINITE );
      OsCloseHandle(hExitMainThreadSema);
@@ -53,7 +53,7 @@ void printOddEvenBusyWait()
 
 
 
-void printEvenNoBusyWait(void* arg)
+void PrintEvenNoBusyWait(void* arg)
 {
     int* pInt = (int*)arg;
     do{
@@ -74,7 +74,7 @@ void printEvenNoBusyWait(void* arg)
     TerminateThread();
 }
 
-void printOddNoBusyWait(void* arg)
+void PrintOddNoBusyWait(void* arg)
 {
     int* pInt = (int*)arg;
     do
@@ -94,7 +94,7 @@ void printOddNoBusyWait(void* arg)
     TerminateThread();
 }
 
-void printOddEvenNoBusyWait()
+void PrintOddEvenNoBusyWait()
 {
     static int i = 0;
 
@@ -103,8 +103,8 @@ void printOddEvenNoBusyWait()
      hExitMainThreadSema = CreateSemaphore( NULL, 0,1, NULL );
 
     // Create two threads, both sharing global data 
-     CreateThread( printEvenNoBusyWait, 0, &i );
-     CreateThread( printOddNoBusyWait, 0, &i );
+     CreateThread( PrintEvenNoBusyWait, 0, &i );
+     CreateThread( PrintOddNoBusyWait, 0, &i );
 
      OsWaitForSingleObject( hExitMainThreadSema, INFINITE );
      OsCloseHandle(hEvenSema);
@@ -113,7 +113,7 @@ void printOddEvenNoBusyWait()
      printf("Exiting main thread\n");
 }
 
-void printEvenParallelSema(void* arg)
+void PrintEvenParallelSema(void* arg)
 {
     int i = 0;
     while (i <= 20)
@@ -129,7 +129,7 @@ void printEvenParallelSema(void* arg)
     TerminateThread();
 }
 
-void printOddParallelSema(void* arg)
+void PrintOddParallelSema(void* arg)
 {
     int i = 1;
     while (i <= 19)
@@ -144,15 +144,15 @@ void printOddParallelSema(void* arg)
 }
 
 
-void printOddEvenWithoutSharedMemWithSemaphore()
+void PrintOddEvenWithoutSharedMemWithSemaphore()
 {
      hEvenSema = CreateSemaphore( NULL, 1,1, NULL );
      hOddSema = CreateSemaphore( NULL, 0,1, NULL );
      hExitMainThreadSema = CreateSemaphore( NULL, 0,1, NULL );
 
     // Create two threads, both sharing global data 
-     CreateThread( printEvenParallelSema, 0, NULL);
-     CreateThread( printOddParallelSema, 0, NULL);
+     CreateThread( PrintEvenParallelSema, 0, NULL);
+     CreateThread( PrintOddParallelSema, 0, NULL);
 
      OsWaitForSingleObject( hExitMainThreadSema, INFINITE );
      OsCloseHandle(hEvenSema);
