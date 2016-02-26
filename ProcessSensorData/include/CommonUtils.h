@@ -1,6 +1,15 @@
+/*******************************************************************************************************************************
+ *  @file   CommonUtils.h
+ *  @brief  Provides some generic types as well as declares some routines to perform bit manipulation on circular buffer
+ *          containing 12 bit entries
+ *  @author Amit Bansal
+ *
+ *
+ *******************************************************************************************************************************/
 #ifndef UTILS_H
 #define UTILS_H
 
+// Some tydefs just to make life easy or to increase portability whenever it will be required
 typedef unsigned char UCHAR;
 typedef unsigned int  UINT;
 typedef short SHORT;
@@ -15,7 +24,7 @@ typedef void VOID;
 #define CONVERT_ENTRIES_TO_BYTE(X) (((X & 1) == 0) ? \
         ((X * NumBitsPerEntries)/(NumBitsPerByte)) : (((X * NumBitsPerEntries)/(NumBitsPerByte)) + 1))
 
-
+// Our own BOOL as ANSI C doesn't provide one
 typedef enum
 {
     FALSE = 0,
@@ -23,7 +32,7 @@ typedef enum
 }BOOL;
 
 /**
- * @brief  Number of entries which needs to be stored in circular buffer
+ * @brief Maximum number of entries which needs to be stored in circular buffer
  *
  */
 enum
@@ -32,7 +41,7 @@ enum
 };
 
 /**
- * @brief Number of bits per entry
+ * @brief Number of bits per entry of circular buffer
  *
  */
 enum
@@ -41,28 +50,30 @@ enum
 };
 
 /**
- * @brief Number of bits per Byte
+ * @brief Number of bits per byte
  *
  */
 enum
 {
     NumBitsPerByte = 8
 };
+
 /**
- * @brief Standard assumption on number of bits per byte
+ * @brief Number of bits per nibble
  *
  */
 enum
 {
-    NumBitsInByte = 8
+    NumBitsPerNibble = 4
 };
+
 
 typedef struct _CircularBuffer
 {
-    UCHAR* pData;
-    UINT   head;
-    UINT   tail;
-    UINT   numEntries;
+    UCHAR* pData;       ///< Pointer to circular buffer content
+    UINT   head;        ///< Right most entry in the circular buffer
+    UINT   tail;        ///< Left most entry in the circular buffer
+    UINT   numEntries;  ///< Number of current entries in the circular buffer
 }CircularBuffer;
 
 // Retrievs a 12 bit entry at a given location from a given packed byte array.

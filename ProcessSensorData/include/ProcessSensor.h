@@ -1,3 +1,12 @@
+/*******************************************************************************************************************************
+ *  @file   ProcessSensor.h
+ *  @brief  Provides processing functions to update given ordered circular buffer with any 12 bit entries bigger than it's
+            existing content.
+ *  @author Amit Bansal
+ *
+ *
+ *******************************************************************************************************************************/
+
 #ifndef PROCESS_SENSOR
 #define PROCESS_SENSOR
 

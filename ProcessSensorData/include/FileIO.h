@@ -1,10 +1,17 @@
+/*******************************************************************************************************************************
+ *  @file   FileIO.h
+ *  @brief  Provides functions to perform file I\O to\from circular buffers.
+ *  @author Amit Bansal
+ *
+ *
+ *******************************************************************************************************************************/
 #ifndef FILEIO_H
 #define FILEIO_H
 
 #include <stdio.h>
 #include "CommonUtils.h"
 
-
+// Just wrapper APIs to keep fileIO code at one place
 FILE* OpenFile(const char* pFileName, const char* mode);
 void  CloseFile(FILE* hFile);
 
