@@ -76,8 +76,10 @@
     <ClInclude Include="..\..\include\Sorting.h" />
     <ClInclude Include="..\..\include\Stack.h" />
     <ClInclude Include="..\..\include\TestCases.h" />
+    <ClInclude Include="..\..\include\UndirectedConnectivity.h" />
     <ClInclude Include="..\..\include\Utils.h" />
     <ClInclude Include="..\..\src\problems\Employee.h" />
+    <ClInclude Include="Dfs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\GraphProcessing.cpp" />

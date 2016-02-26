@@ -46,4 +46,8 @@ public:
         }
     }
 
+    VINT* GetGraphAdjList()
+    {
+        return m_Adj;
+    }
 };

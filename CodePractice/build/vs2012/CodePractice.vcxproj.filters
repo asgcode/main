@@ -66,6 +66,12 @@
     <ClInclude Include="..\..\src\problems\Employee.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Dfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\UndirectedConnectivity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Main.cpp">
