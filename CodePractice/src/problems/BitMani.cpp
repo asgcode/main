@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void printSetRange(int x)
+void PrintSetRange(int x)
 {
     int start = 0;
     int end = 0;
@@ -80,7 +80,7 @@ int GiveOnceOnlyNumber(int* pArray, int size)
 
         // Or other strategy is basically remove number which are there in both once and twice from once.
         common_bit = once & twice;
-
+        s
         //remove common bit from once;
         once = once & ~(common_bit);
 

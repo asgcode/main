@@ -4,7 +4,7 @@ int FindNElementRepeatNBy2Times(int* pArray, int size)
 {
     // record 2 element total, ceil(size/2), ceil(size/2) + 1
     // if they are equal return any one of them if not return ceil(size/2) -1
-    int middle = ceil(size, 2) - 1;
+    int middle = Ceil(size, 2) - 1;
 
     if (size <= 2)
     {

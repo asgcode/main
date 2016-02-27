@@ -51,14 +51,26 @@
     <ClInclude Include="..\..\include\osutils\osutils.h">
       <Filter>Header Files\osutils</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\problems\Employee.h">
-      <Filter>Source Files\Problems</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\Arrays.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\BitsMani.h">
       <Filter>Source Files\Problems</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Sorting.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Graphs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\problems\Employee.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dfs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\UndirectedConnectivity.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +93,12 @@
       <Filter>Source Files\Problems</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\problems\BitMani.cpp">
+      <Filter>Source Files\Problems</Filter>
+    </ClCompile>
+    <ClCompile Include="Sorting.cpp">
+      <Filter>Source Files\Problems</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\GraphProcessing.cpp">
       <Filter>Source Files\Problems</Filter>
     </ClCompile>
   </ItemGroup>

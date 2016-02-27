@@ -2,15 +2,19 @@
 #define TEST_CASES
 
 #include <stdio.h>
-#include "QuickFind.h"
-#include "QuickUnion.h"
-#include "Stack.h"
-#include "QuickSort.h"
-#include "Utils.h"
-#include "MultiThreading.h"
-#include "MyString.h"
+
 #include "Arrays.h"
 #include "BitsMani.h"
+#include "Graphs.h"
+#include "MultiThreading.h"
+#include "MyString.h"
+#include "QuickFind.h"
+#include "QuickSort.h"
+#include "QuickUnion.h"
+#include "Sorting.h"
+#include "Stack.h"
+#include "Utils.h"
+
 
 void TestQuickFind(void)
 {
@@ -78,17 +82,17 @@ void TestQuickSort()
     int arr[] = {2, 3, 8, 5, 6};
     int size  = (sizeof(arr)/sizeof(arr[0]));
 
-    printArray(arr, size);
+    PrintArray(arr, size);
 
     QuickSort(arr, 0, (size -1));
 
-    printArray(arr, size);
+    PrintArray(arr, size);
 }
 
 void TestMultiThreading()
 {
     //printOddEvenBusyWait();
-    printOddEvenNoBusyWait();
+    PrintOddEvenNoBusyWait();
     //printOddEvenWithoutSharedMemWithSemaphore();
 }
 
@@ -114,13 +118,13 @@ void TestRepeatNBy2()
     int arr[] = {3, 3, 3, 3, 5, 6, 4, 4};
     int size  = (sizeof(arr)/sizeof(arr[0]));
 
-    printArray(arr, size);
+    PrintArray(arr, size);
     printf("TestRepeatNBy2 %d \n", FindNElementRepeatNBy2Times(arr, size));
 }
 
 void TestPrintSetRange()
 {
-    printSetRange(6390);
+    PrintSetRange(6390);
 }
 
 void TestGiveOnceOnlyNumber()
@@ -137,6 +141,26 @@ void TestResetBit()
 }
 void TestPrint32Best()
 {
-    PrintBest32("test1.bin", "test1.out");
+    //PrintBest32("test1.bin", "test1.out");
 }
+
+void TestPerformShellSort()
+{
+    int arr[] = {2, 3, 1, 8, -10, 16, 15, 14, 19};
+    int size  = (sizeof(arr)/sizeof(arr[0]));
+
+    PerformShellSort(arr, size);
+    PrintArray(arr, size);
+
+}
+
+void TestUnDirectedGraph()
+{
+    int arr[] = {5, 5, 4, 2, 2, 1, 3, 1, 3, 0, 4, 3};
+
+    UndirectedGraph unGraph(arr);
+    unGraph.PrintEdges();
+
+}
+
 #endif

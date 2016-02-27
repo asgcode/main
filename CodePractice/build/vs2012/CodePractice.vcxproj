@@ -65,6 +65,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Arrays.h" />
     <ClInclude Include="..\..\include\BitsMani.h" />
+    <ClInclude Include="..\..\include\Graphs.h" />
     <ClInclude Include="..\..\include\Main.h" />
     <ClInclude Include="..\..\include\MultiThreading.h" />
     <ClInclude Include="..\..\include\MyString.h" />
@@ -72,12 +73,16 @@
     <ClInclude Include="..\..\include\QuickFind.h" />
     <ClInclude Include="..\..\include\QuickSort.h" />
     <ClInclude Include="..\..\include\QuickUnion.h" />
+    <ClInclude Include="..\..\include\Sorting.h" />
     <ClInclude Include="..\..\include\Stack.h" />
     <ClInclude Include="..\..\include\TestCases.h" />
+    <ClInclude Include="..\..\include\UndirectedConnectivity.h" />
     <ClInclude Include="..\..\include\Utils.h" />
     <ClInclude Include="..\..\src\problems\Employee.h" />
+    <ClInclude Include="Dfs.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\GraphProcessing.cpp" />
     <ClCompile Include="..\..\src\Main.cpp" />
     <ClCompile Include="..\..\src\problems\Arrays.cpp" />
     <ClCompile Include="..\..\src\problems\BitMani.cpp" />
@@ -85,6 +90,7 @@
     <ClCompile Include="..\..\src\problems\Multithreading.cpp" />
     <ClCompile Include="..\..\src\problems\MyString.cpp" />
     <ClCompile Include="..\..\src\Utils.cpp" />
+    <ClCompile Include="Sorting.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,13 +15,13 @@ int partition(int* arr, int low, int high)
     {
         if (arr[i] < pivot)
         {
-            swap(&arr[i], &arr[k]);
+            Swap(&arr[i], &arr[k]);
             k++;
         }
     }
 
-    // bring pivot to its spot by performing a swap operation
-    swap(&arr[k], &arr[high]);
+    // bring pivot to its spot by performing a Swap operation
+    Swap(&arr[k], &arr[high]);
 
     return k;
 }

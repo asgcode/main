@@ -3,9 +3,9 @@
 
 typedef unsigned int UINT;
 
-void swap(int* x, int*y);
-void swapChar(char* x, char*y);
-void printArray(int* arr, int size);
-int  ceil(int num, int divisor);
-int resetBit(int* p, int bit);
+void Swap(int* pX, int* pY);
+void SwapChar(char* pX, char* pY);
+void PrintArray(int* pArray, int size);
+int  Ceil(int num, int divisor);
+int  ResetBit(int* p, int bit);
 #endif
